@@ -45,6 +45,10 @@ public class RunStats {
     @Produces({"application/json"})
     @Consumes({"application/json"})
 	public RunStatsDataBean resetTrade(@PathParam(value = "deleteAll") boolean deleteAll) throws Exception {
+    	// TODO: this implementation will not work if separate quotes from accounts into their own containers
+    	// and database. Instead,  you will need to implement the logic in this method by calling rest api's
+    	// in the accounts and quotes microservices. Of course, you will also need to add REST APIs required
+    	// to support this implementaiton.
 		return impl.resetTrade(deleteAll);
 	}
 
