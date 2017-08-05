@@ -23,7 +23,7 @@
     	<dependency>
 		  	<groupId>net.wasdev.maven.tools.targets</groupId>
 		  	<artifactId>liberty-target</artifactId>
-		  	<version>RELEASE</version>
+		  	<version>17.0.0.2</version>
 		  	<type>pom</type>
 		  	<scope>provided</scope>
   		</dependency>

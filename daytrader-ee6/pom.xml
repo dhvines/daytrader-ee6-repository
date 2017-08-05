@@ -11,12 +11,8 @@
 
 	<properties>
 
-<!--     <docker.registry>http://registry.docker.hub.com/</docker.registry> 
-     <push.image>true</push.image>                                      
--->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
 
 		<!-- Liberty server properties -->
 		<wlpServerName>Daytrader3Sample</wlpServerName>
@@ -42,25 +38,8 @@
 			<version>0.0.1-SNAPSHOT</version>
 			<type>war</type>
 		</dependency>
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-			<version>1.0.3</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.6</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-core</artifactId>
-			<version>2.8.2</version>
-			<scope>compile</scope>
-		</dependency>
 
+<!--  test dependencies -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -109,25 +88,6 @@
 							<bundleFileName>Rest.war</bundleFileName>
 							<!-- More configuration can be set here -->
 						</webModule>
-
-						<jarModule>
-							<groupId>commons-logging</groupId>
-							<artifactId>commons-logging</artifactId>
-							<!-- More configuration can be set here -->
-						</jarModule>
-						<jarModule>
-							<groupId>log4j</groupId>
-							<artifactId>log4j</artifactId>
-							<bundleFileName>log4j.jar</bundleFileName>
-							<!-- More configuration can be set here -->
-						</jarModule>
-						<jarModule>
-							<groupId>org.apache.logging.log4j</groupId>
-							<artifactId>log4j-core</artifactId>
-							<bundleFileName>log4j-core.jar</bundleFileName>
-							<!-- More configuration can be set here -->
-						</jarModule>
-
 					</modules>
 				</configuration>
 			</plugin>
@@ -161,16 +121,13 @@
 						</goals>
 						<configuration>
 							<systemPropertyVariables>
-<!-- uncomment for onpremise integragtion test
+<!-- uncomment for wlp
 								<daytrader.app.route>http://localhost:9080</daytrader.app.route>
 -->
-<!--  uncomment for container integration test -->
+<!--  uncomment for docker -->
 								<daytrader.app.route>http://192.168.254.9:9080</daytrader.app.route>
 							</systemPropertyVariables>
 							<testSourceDirectory>src/test/java</testSourceDirectory>
-							<includes>
-								<include>**/*Test.java</include>
-							</includes>
 						</configuration>
 					</execution>
 					<execution>
@@ -263,6 +220,7 @@
 							<goal>package-server</goal>
 						</goals>
 					</execution>
+					<!-- uncomment for wlp
 					<execution>
 						<id>install-feature</id>
 						<phase>prepare-package</phase>
@@ -297,10 +255,11 @@
 							<goal>stop-server</goal>
 						</goals>
 					</execution>
+					-->
 				</executions>
 			</plugin>
 
-
+            <!--  uncomment for docker -->
 			<plugin> 
 				<groupId>com.spotify</groupId> 
 				<artifactId>docker-maven-plugin</artifactId> 
@@ -319,53 +278,54 @@
 				</configuration> 
 			</plugin>
 
-<plugin>
-    <groupId>io.fabric8</groupId>
-    <artifactId>docker-maven-plugin</artifactId>
-    <version>0.20.1</version>
-    <executions>
-        <execution>
-            <id>start</id>
-            <phase>pre-integration-test</phase>
-            <goals>
-                <goal>start</goal>
-            </goals>
-            <configuration>
-                <images>
-                    <image>
-                        <name>dhvines/${project.artifactId}:${project.version}</name>
-                        <alias>${project.artifactId}</alias>
-                        <run>
-                            <ports>
-                                <port>9080:9080</port>
-                                <port>9443:9443</port>
-                            </ports>
-                            <wait>
-                                <log>(?s)The server defaultServer is ready to run a smarter planet.</log>
-                                <time>20000</time>
-                            </wait>
-                        </run>
-                    </image>
-                </images>
-            </configuration>
-        </execution>
-        <execution>
-            <id>stop</id>
-            <phase>post-integration-test</phase>
-            <goals>
-                <goal>stop</goal>
-            </goals>
-        </execution>
+ 			<!--  uncomment for docker -->
+			<plugin>
+    			<groupId>io.fabric8</groupId>
+    			<artifactId>docker-maven-plugin</artifactId>
+    			<version>0.20.1</version>
+    			<executions>
+        			<execution>
+            			<id>start</id>
+            			<phase>pre-integration-test</phase>
+			            <goals>
+            			    <goal>start</goal>
+			            </goals>
+			            <configuration>
+            			    <images>
+                    			<image>
+                        			<name>dhvines/${project.artifactId}:${project.version}</name>
+                        			<alias>${project.artifactId}</alias>
+			                        <run>
+            			                <ports>
+                        			        <port>9080:9080</port>
+                                			<port>9443:9443</port>
+                            			</ports>                         
+                            			<wait>
+			                                <log>(?s)The server defaultServer is ready to run a smarter planet.</log>
+            			                    <time>20000</time>
+			                            </wait>
+			                        </run>
+            			        </image>
+                			</images>
+            			</configuration>
+        			</execution>
+        			<execution>
+            			<id>stop</id>
+            			<phase>post-integration-test</phase>
+            			<goals>
+                			<goal>stop</goal>
+            			</goals>
+        			</execution>
 
-        <execution>
-            <id>remove</id>
-            <phase>post-integration-test</phase>
-            <goals>
-                <goal>remove</goal>
-            </goals>
-        </execution>
+			        <execution>
+            			<id>remove</id>
+            			<phase>post-integration-test</phase>
+            			<goals>
+             			   <goal>remove</goal>
+            			</goals>
+       			 </execution>
         
-    </executions>
+			</executions>
 
             </plugin>
 
